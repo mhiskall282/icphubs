@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, ChevronDown, Wallet, LogOut, User, Trophy, BarChart, Bell } from 'lucide-react';
+import { Menu, X, ChevronDown, Wallet, LogOut, User, Trophy, BarChart, Bell, Settings, HelpCircle, Bot } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -31,10 +31,12 @@ export const Header: React.FC = () => {
     { title: 'How It Works', path: '/how-it-works' },
     { title: 'Leaderboard', path: '/leaderboard', icon: Trophy },
     { title: 'Stats', path: '/stats', icon: BarChart },
+    { title: 'AI Assistant', path: '/ai-assistant', icon: Bot },
   ];
 
   const authLinks = [
     { title: 'Dashboard', path: '/dashboard' },
+    { title: 'Wallet', path: '/wallet', icon: Wallet },
   ];
 
   return (
@@ -68,12 +70,13 @@ export const Header: React.FC = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
                     location.pathname === link.path
                       ? 'text-secondary-500'
                       : 'text-gray-300 hover:text-secondary-400'
                   }`}
                 >
+                  {link.icon && <link.icon size={16} className="mr-1" />}
                   {link.title}
                 </Link>
               ))}
@@ -117,6 +120,22 @@ export const Header: React.FC = () => {
                       >
                         <User size={16} className="mr-2" />
                         Profile
+                      </Link>
+                      <Link
+                        to="/settings"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-primary-700 hover:text-white flex items-center"
+                        onClick={() => setProfileMenuOpen(false)}
+                      >
+                        <Settings size={16} className="mr-2" />
+                        Settings
+                      </Link>
+                      <Link
+                        to="/help"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-primary-700 hover:text-white flex items-center"
+                        onClick={() => setProfileMenuOpen(false)}
+                      >
+                        <HelpCircle size={16} className="mr-2" />
+                        Help
                       </Link>
                       <button
                         className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-primary-700 hover:text-white flex items-center"
@@ -226,6 +245,20 @@ export const Header: React.FC = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Profile
+                  </Link>
+                  <Link
+                    to="/settings"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Settings
+                  </Link>
+                  <Link
+                    to="/help"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Help
                   </Link>
                   <Link
                     to="/notifications"
