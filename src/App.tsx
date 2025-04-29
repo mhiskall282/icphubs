@@ -12,6 +12,10 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { NotificationsPage } from './pages/NotificationsPage';
+import { AIAssistantPage } from './pages/AIAssistantPage';
+import { ICPWalletPage } from './pages/ICPWalletPage';
+import { SettingsPage } from './pages/SettingsPage';
+import { HelpPage } from './pages/HelpPage';
 
 function App() {
   return (
@@ -29,6 +33,10 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/ai-assistant" element={<AIAssistantPage />} />
+              <Route path="/wallet" element={<ICPWalletPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/help" element={<HelpPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Router>
