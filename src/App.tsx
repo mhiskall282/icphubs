@@ -6,6 +6,12 @@ import { ScholarshipProvider } from './context/ScholarshipContext';
 import { HomePage } from './pages/HomePage';
 import { ExplorePage } from './pages/ExplorePage';
 import { DashboardPage } from './pages/DashboardPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
+import { StatsPage } from './pages/StatsPage';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { NotificationsPage } from './pages/NotificationsPage';
 
 function App() {
   return (
@@ -17,6 +23,12 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/explore" element={<ExplorePage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/leaderboard" element={<LeaderboardPage />} />
+              <Route path="/stats" element={<StatsPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Router>
