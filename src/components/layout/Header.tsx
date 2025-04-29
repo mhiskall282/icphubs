@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, ChevronDown, Wallet, LogOut, User } from 'lucide-react';
+import { Menu, X, ChevronDown, Wallet, LogOut, User, Trophy, BarChart, Bell } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -29,6 +29,8 @@ export const Header: React.FC = () => {
     { title: 'Home', path: '/' },
     { title: 'Explore', path: '/explore' },
     { title: 'How It Works', path: '/how-it-works' },
+    { title: 'Leaderboard', path: '/leaderboard', icon: Trophy },
+    { title: 'Stats', path: '/stats', icon: BarChart },
   ];
 
   const authLinks = [
@@ -51,12 +53,13 @@ export const Header: React.FC = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
                   location.pathname === link.path
                     ? 'text-secondary-500'
                     : 'text-gray-300 hover:text-secondary-400'
                 }`}
               >
+                {link.icon && <link.icon size={16} className="mr-1" />}
                 {link.title}
               </Link>
             ))}
@@ -78,46 +81,54 @@ export const Header: React.FC = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
-              <div className="relative">
-                <button
-                  onClick={toggleProfileMenu}
-                  className="flex items-center space-x-2 text-white hover:text-secondary-400 focus:outline-none transition"
+              <>
+                <Link
+                  to="/notifications"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  <img
-                    src={currentUser?.avatar}
-                    alt={currentUser?.name}
-                    className="h-8 w-8 rounded-full object-cover border border-secondary-500"
-                  />
-                  <span className="text-sm font-medium">{currentUser?.name}</span>
-                  <ChevronDown size={16} />
-                </button>
+                  <Bell size={20} />
+                </Link>
+                <div className="relative">
+                  <button
+                    onClick={toggleProfileMenu}
+                    className="flex items-center space-x-2 text-white hover:text-secondary-400 focus:outline-none transition"
+                  >
+                    <img
+                      src={currentUser?.avatar}
+                      alt={currentUser?.name}
+                      className="h-8 w-8 rounded-full object-cover border border-secondary-500"
+                    />
+                    <span className="text-sm font-medium">{currentUser?.name}</span>
+                    <ChevronDown size={16} />
+                  </button>
 
-                {profileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 py-2 bg-primary-800 rounded-md shadow-lg border border-primary-700">
-                    <div className="px-4 py-2 border-b border-primary-700">
-                      <p className="text-sm text-white font-medium">{currentUser?.name}</p>
-                      <p className="text-xs text-gray-400 truncate">
-                        {wallet?.address ? `${wallet.address.substring(0, 8)}...` : 'No wallet connected'}
-                      </p>
+                  {profileMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 py-2 bg-primary-800 rounded-md shadow-lg border border-primary-700">
+                      <div className="px-4 py-2 border-b border-primary-700">
+                        <p className="text-sm text-white font-medium">{currentUser?.name}</p>
+                        <p className="text-xs text-gray-400 truncate">
+                          {wallet?.address ? `${wallet.address.substring(0, 8)}...` : 'No wallet connected'}
+                        </p>
+                      </div>
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-primary-700 hover:text-white flex items-center"
+                        onClick={() => setProfileMenuOpen(false)}
+                      >
+                        <User size={16} className="mr-2" />
+                        Profile
+                      </Link>
+                      <button
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-primary-700 hover:text-white flex items-center"
+                        onClick={handleLogout}
+                      >
+                        <LogOut size={16} className="mr-2" />
+                        Logout
+                      </button>
                     </div>
-                    <Link
-                      to="/profile"
-                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-primary-700 hover:text-white flex items-center"
-                      onClick={() => setProfileMenuOpen(false)}
-                    >
-                      <User size={16} className="mr-2" />
-                      Profile
-                    </Link>
-                    <button
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-primary-700 hover:text-white flex items-center"
-                      onClick={handleLogout}
-                    >
-                      <LogOut size={16} className="mr-2" />
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              </>
             ) : (
               <>
                 <Button
@@ -215,6 +226,13 @@ export const Header: React.FC = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Profile
+                  </Link>
+                  <Link
+                    to="/notifications"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Notifications
                   </Link>
                   <button
                     className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
