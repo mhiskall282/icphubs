@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Menu, X, ChevronDown, Wallet, LogOut, User, Trophy, BarChart, Bell, Settings, HelpCircle, Bot } from 'lucide-react';
+import { Menu, X, ChevronDown, Wallet, LogOut, User, Trophy, BarChart, Bell, Settings, HelpCircle, Bot, Book, Newspaper, Calendar, Users, FileText } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
+import { Menu as HeadlessMenu } from '@headlessui/react';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -25,10 +26,25 @@ export const Header: React.FC = () => {
     setProfileMenuOpen(false);
   };
 
-  const navLinks = [
+  const mainNavLinks = [
     { title: 'Home', path: '/' },
+    {
+      title: 'Learn',
+      submenu: [
+        { title: 'Courses', path: '/courses', icon: Book },
+        { title: 'Resources', path: '/resources', icon: FileText },
+        { title: 'Blog', path: '/blog', icon: Newspaper },
+      ]
+    },
+    {
+      title: 'Community',
+      submenu: [
+        { title: 'Events', path: '/events', icon: Calendar },
+        { title: 'Members', path: '/members', icon: Users },
+        { title: 'Forum', path: '/forum', icon: MessageSquare },
+      ]
+    },
     { title: 'Explore', path: '/explore' },
-    { title: 'How It Works', path: '/how-it-works' },
     { title: 'Leaderboard', path: '/leaderboard', icon: Trophy },
     { title: 'Stats', path: '/stats', icon: BarChart },
     { title: 'AI Assistant', path: '/ai-assistant', icon: Bot },
@@ -38,6 +54,36 @@ export const Header: React.FC = () => {
     { title: 'Dashboard', path: '/dashboard' },
     { title: 'Wallet', path: '/wallet', icon: Wallet },
   ];
+
+  const renderSubmenu = (submenu: any[]) => (
+    <HeadlessMenu>
+      {({ open }) => (
+        <div className="relative">
+          <HeadlessMenu.Button className="px-3 py-2 text-sm font-medium transition-colors flex items-center text-gray-300 hover:text-secondary-400">
+            <span>Learn</span>
+            <ChevronDown size={16} className={`ml-1 transform transition-transform ${open ? 'rotate-180' : ''}`} />
+          </HeadlessMenu.Button>
+          <HeadlessMenu.Items className="absolute left-0 mt-2 w-48 origin-top-left bg-primary-800 border border-primary-700 rounded-md shadow-lg">
+            {submenu.map((item) => (
+              <HeadlessMenu.Item key={item.path}>
+                {({ active }) => (
+                  <Link
+                    to={item.path}
+                    className={`${
+                      active ? 'bg-primary-700 text-white' : 'text-gray-300'
+                    } flex items-center px-4 py-2 text-sm`}
+                  >
+                    {item.icon && <item.icon size={16} className="mr-2" />}
+                    {item.title}
+                  </Link>
+                )}
+              </HeadlessMenu.Item>
+            ))}
+          </HeadlessMenu.Items>
+        </div>
+      )}
+    </HeadlessMenu>
+  );
 
   return (
     <header className="bg-primary-900/80 backdrop-blur-sm sticky top-0 z-50 border-b border-primary-800">
@@ -51,19 +97,25 @@ export const Header: React.FC = () => {
           </div>
 
           <nav className="hidden md:flex space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
-                  location.pathname === link.path
-                    ? 'text-secondary-500'
-                    : 'text-gray-300 hover:text-secondary-400'
-                }`}
-              >
-                {link.icon && <link.icon size={16} className="mr-1" />}
-                {link.title}
-              </Link>
+            {mainNavLinks.map((link) => (
+              link.submenu ? (
+                <div key={link.title} className="relative group">
+                  {renderSubmenu(link.submenu)}
+                </div>
+              ) : (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
+                    location.pathname === link.path
+                      ? 'text-secondary-500'
+                      : 'text-gray-300 hover:text-secondary-400'
+                  }`}
+                >
+                  {link.icon && <link.icon size={16} className="mr-1" />}
+                  {link.title}
+                </Link>
+              )
             ))}
             {isAuthenticated &&
               authLinks.map((link) => (
@@ -182,19 +234,37 @@ export const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-primary-800">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  location.pathname === link.path
-                    ? 'bg-primary-700 text-secondary-500'
-                    : 'text-gray-300 hover:bg-primary-700 hover:text-white'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.title}
-              </Link>
+            {mainNavLinks.map((link) => (
+              link.submenu ? (
+                <div key={link.title} className="space-y-1">
+                  <div className="px-3 py-2 text-base font-medium text-gray-300">
+                    {link.title}
+                  </div>
+                  {link.submenu.map((subItem) => (
+                    <Link
+                      key={subItem.path}
+                      to={subItem.path}
+                      className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white pl-6"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {subItem.title}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`block px-3 py-2 rounded-md text-base font-medium ${
+                    location.pathname === link.path
+                      ? 'bg-primary-700 text-secondary-500'
+                      : 'text-gray-300 hover:bg-primary-700 hover:text-white'
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.title}
+                </Link>
+              )
             ))}
             {isAuthenticated &&
               authLinks.map((link) => (

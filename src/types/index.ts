@@ -4,6 +4,10 @@ export interface User {
   avatar: string;
   wallet: string;
   bio?: string;
+  role: 'admin' | 'user' | 'student' | 'donor';
+  email: string;
+  createdAt: string;
+  status: 'active' | 'inactive' | 'suspended';
 }
 
 export interface Student extends User {
@@ -59,4 +63,11 @@ export interface WalletInfo {
   address: string;
   balance: number;
   connected: boolean;
+}
+
+export interface AdminStats {
+  totalUsers: number;
+  activeUsers: number;
+  totalDonations: number;
+  totalScholarships: number;
 }
