@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, ChevronDown, Wallet, LogOut, User, Trophy, BarChart, Bell, Settings, HelpCircle, Bot, Book, Newspaper, Calendar, Users, FileText, MessageSquare } from 'lucide-react';
+import { Menu, X, ChevronDown, Wallet, LogOut, User, Trophy, BarChart, Bell, Settings, HelpCircle, Bot, Book, Newspaper, Calendar, Users, FileText, Coins, Grid as Bridge, Vote, MessageSquare } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -12,20 +12,6 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  const toggleProfileMenu = () => {
-    setProfileMenuOpen(!profileMenuOpen);
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-    setProfileMenuOpen(false);
-  };
-
   const mainNavLinks = [
     { title: 'Home', path: '/' },
     {
@@ -34,25 +20,29 @@ export const Header: React.FC = () => {
         { title: 'Courses', path: '/courses', icon: Book },
         { title: 'Resources', path: '/resources', icon: FileText },
         { title: 'Blog', path: '/blog', icon: Newspaper },
+        { title: 'Events', path: '/events', icon: Calendar },
       ]
     },
     {
       title: 'Community',
       submenu: [
-        { title: 'Events', path: '/events', icon: Calendar },
         { title: 'Members', path: '/members', icon: Users },
         { title: 'Forum', path: '/forum', icon: MessageSquare },
+        { title: 'Leaderboard', path: '/leaderboard', icon: Trophy },
+        { title: 'Stats', path: '/stats', icon: BarChart },
+      ]
+    },
+    {
+      title: 'ICP Features',
+      submenu: [
+        { title: 'Governance', path: '/governance', icon: Vote },
+        { title: 'Staking', path: '/staking', icon: Coins },
+        { title: 'Bridge', path: '/bridge', icon: Bridge },
+        { title: 'NFT Gallery', path: '/nft', icon: Image },
       ]
     },
     { title: 'Explore', path: '/explore' },
-    { title: 'Leaderboard', path: '/leaderboard', icon: Trophy },
-    { title: 'Stats', path: '/stats', icon: BarChart },
     { title: 'AI Assistant', path: '/ai-assistant', icon: Bot },
-  ];
-
-  const authLinks = [
-    { title: 'Dashboard', path: '/dashboard' },
-    { title: 'Wallet', path: '/wallet', icon: Wallet },
   ];
 
   const renderSubmenu = (submenu: any[]) => (
@@ -72,6 +62,7 @@ export const Header: React.FC = () => {
                     className={`${
                       active ? 'bg-primary-700 text-white' : 'text-gray-300'
                     } flex items-center px-4 py-2 text-sm`}
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.icon && <item.icon size={16} className="mr-2" />}
                     {item.title}
@@ -96,7 +87,7 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-4">
             {mainNavLinks.map((link) => (
               link.submenu ? (
                 <div key={link.title} className="relative group">
@@ -117,21 +108,6 @@ export const Header: React.FC = () => {
                 </Link>
               )
             ))}
-            {isAuthenticated &&
-              authLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`px-3 py-2 text-sm font-medium transition-colors flex items-center ${
-                    location.pathname === link.path
-                      ? 'text-secondary-500'
-                      : 'text-gray-300 hover:text-secondary-400'
-                  }`}
-                >
-                  {link.icon && <link.icon size={16} className="mr-1" />}
-                  {link.title}
-                </Link>
-              ))}
           </nav>
 
           <div className="hidden md:flex items-center space-x-4">
@@ -145,7 +121,7 @@ export const Header: React.FC = () => {
                 </Link>
                 <div className="relative">
                   <button
-                    onClick={toggleProfileMenu}
+                    onClick={() => setProfileMenuOpen(!profileMenuOpen)}
                     className="flex items-center space-x-2 text-white hover:text-secondary-400 focus:outline-none transition"
                   >
                     <img
@@ -191,7 +167,11 @@ export const Header: React.FC = () => {
                       </Link>
                       <button
                         className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-primary-700 hover:text-white flex items-center"
-                        onClick={handleLogout}
+                        onClick={() => {
+                          logout();
+                          setProfileMenuOpen(false);
+                          navigate('/');
+                        }}
                       >
                         <LogOut size={16} className="mr-2" />
                         Logout
@@ -220,10 +200,10 @@ export const Header: React.FC = () => {
             )}
           </div>
 
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden">
             <button
               className="text-gray-300 hover:text-white focus:outline-none"
-              onClick={toggleMobileMenu}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -233,7 +213,7 @@ export const Header: React.FC = () => {
 
       {mobileMenuOpen && (
         <div className="md:hidden bg-primary-800">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <div className="px-2 pt-2 pb-3 space-y-1">
             {mainNavLinks.map((link) => (
               link.submenu ? (
                 <div key={link.title} className="space-y-1">
@@ -244,9 +224,10 @@ export const Header: React.FC = () => {
                     <Link
                       key={subItem.path}
                       to={subItem.path}
-                      className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white pl-6"
+                      className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white pl-6 flex items-center"
                       onClick={() => setMobileMenuOpen(false)}
                     >
+                      {subItem.icon && <subItem.icon size={16} className="mr-2" />}
                       {subItem.title}
                     </Link>
                   ))}
@@ -255,118 +236,110 @@ export const Header: React.FC = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  className={`block px-3 py-2 rounded-md text-base font-medium flex items-center ${
                     location.pathname === link.path
                       ? 'bg-primary-700 text-secondary-500'
                       : 'text-gray-300 hover:bg-primary-700 hover:text-white'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
+                  {link.icon && <link.icon size={16} className="mr-2" />}
                   {link.title}
                 </Link>
               )
             ))}
-            {isAuthenticated &&
-              authLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    location.pathname === link.path
-                      ? 'bg-primary-700 text-secondary-500'
-                      : 'text-gray-300 hover:bg-primary-700 hover:text-white'
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.title}
-                </Link>
-              ))}
           </div>
-          <div className="pt-4 pb-3 border-t border-primary-700">
-            {isAuthenticated ? (
-              <>
-                <div className="flex items-center px-5">
-                  <div className="flex-shrink-0">
-                    <img
-                      src={currentUser?.avatar}
-                      alt={currentUser?.name}
-                      className="h-10 w-10 rounded-full object-cover border border-secondary-500"
-                    />
-                  </div>
-                  <div className="ml-3">
-                    <div className="text-base font-medium text-white">{currentUser?.name}</div>
-                    <div className="text-sm font-medium text-gray-400 flex items-center">
-                      <Wallet size={14} className="mr-1" />
-                      {wallet?.address ? (
-                        <span className="truncate max-w-[150px]">
-                          {wallet.address.substring(0, 8)}...
-                        </span>
-                      ) : (
-                        'No wallet connected'
-                      )}
-                    </div>
+
+          {isAuthenticated ? (
+            <div className="pt-4 pb-3 border-t border-primary-700">
+              <div className="flex items-center px-5">
+                <div className="flex-shrink-0">
+                  <img
+                    src={currentUser?.avatar}
+                    alt={currentUser?.name}
+                    className="h-10 w-10 rounded-full object-cover border border-secondary-500"
+                  />
+                </div>
+                <div className="ml-3">
+                  <div className="text-base font-medium text-white">{currentUser?.name}</div>
+                  <div className="text-sm font-medium text-gray-400 flex items-center">
+                    <Wallet size={14} className="mr-1" />
+                    {wallet?.address ? (
+                      <span className="truncate max-w-[150px]">
+                        {wallet.address.substring(0, 8)}...
+                      </span>
+                    ) : (
+                      'No wallet connected'
+                    )}
                   </div>
                 </div>
-                
-                <div className="mt-3 px-2 space-y-1">
-                  <Link
-                    to="/profile"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    to="/settings"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Settings
-                  </Link>
-                  <Link
-                    to="/help"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Help
-                  </Link>
-                  <Link
-                    to="/notifications"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Notifications
-                  </Link>
-                  <button
-                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Logout
-                  </button>
-                </div>
-              </>
-            ) : (
+              </div>
+              
               <div className="mt-3 px-2 space-y-1">
                 <Link
-                  to="/login"
+                  to="/profile"
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Login
+                  Profile
                 </Link>
                 <Link
-                  to="/register"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-secondary-500 hover:bg-primary-700 hover:text-secondary-400"
+                  to="/settings"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Register
+                  Settings
                 </Link>
+                <Link
+                  to="/help"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Help
+                </Link>
+                <Link
+                  to="/notifications"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Notifications
+                </Link>
+                <button
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-primary-700 hover:text-white"
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                    navigate('/');
+                  }}
+                >
+                  Logout
+                </button>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="pt-4 pb-3 border-t border-primary-700 px-5 space-y-2">
+              <Button
+                variant="outline"
+                fullWidth
+                onClick={() => {
+                  navigate('/login');
+                  setMobileMenuOpen(false);
+                }}
+              >
+                Login
+              </Button>
+              <Button
+                variant="primary"
+                fullWidth
+                onClick={() => {
+                  navigate('/register');
+                  setMobileMenuOpen(false);
+                }}
+              >
+                Register
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </header>
