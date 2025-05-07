@@ -28,6 +28,8 @@ import { ICPSwapPage } from './pages/ICPSwapPage';
 import { ICPBridgePage } from './pages/ICPBridgePage';
 import { ICPNFTPage } from './pages/ICPNFTPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { MarketplacePage } from './pages/MarketplacePage';
+import { AnalyticsPage } from './pages/AnalyticsPage';
 
 function App() {
   return (
@@ -61,6 +63,8 @@ function App() {
               <Route path="/bridge" element={<ICPBridgePage />} />
               <Route path="/nft" element={<ICPNFTPage />} />
               <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/marketplace" element={<MarketplacePage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Router>
