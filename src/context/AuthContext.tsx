@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Student, Donor, WalletInfo } from '../types';
-import { mockStudents, mockDonors} from '../data/mockData';
+import { mockStudents, mockDonors } from '../data/mockData';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -8,7 +8,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isStudent: boolean;
   isDonor: boolean;
-  login: (userId: string, userType: 'student' | 'donor') => void;
+  login: (userId: string, userType: 'student' | 'donor') => Promise<void>;
   logout: () => void;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
@@ -25,22 +25,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [wallet, setWallet] = useState<WalletInfo>(initialWallet);
+  const [loading, setLoading] = useState(false);
 
-  const login = (userId: string, userType: 'student' | 'donor') => {
-    const user = userType === 'student' 
-      ? mockStudents.find(s => s.id === userId)
-      : mockDonors.find(d => d.id === userId);
-    
-    if (user) {
-      setCurrentUser(user);
-      // If user has a wallet, simulate connection
-      if (user.wallet) {
-        setWallet({
-          address: user.wallet,
-          balance: Math.floor(Math.random() * 100),
-          connected: true
-        });
+  const login = async (userId: string, userType: 'student' | 'donor'): Promise<void> => {
+    setLoading(true);
+    try {
+      const user = userType === 'student' 
+        ? mockStudents.find(s => s.id === userId)
+        : mockDonors.find(d => d.id === userId);
+      
+      if (user) {
+        setCurrentUser(user);
+        if (user.wallet) {
+          setWallet({
+            address: user.wallet,
+            balance: Math.floor(Math.random() * 100),
+            connected: true
+          });
+        }
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,7 +55,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const connectWallet = async (): Promise<void> => {
-    // Mock wallet connection
     return new Promise((resolve) => {
       setTimeout(() => {
         const mockAddress = `icp${Math.random().toString(36).substring(2, 15)}`;
@@ -60,7 +64,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           connected: true
         });
         
-        // If user exists, update their wallet
         if (currentUser) {
           setCurrentUser({
             ...currentUser,
@@ -69,7 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         
         resolve();
-      }, 1000);
+      }, 500);
     });
   };
 
